@@ -3,7 +3,6 @@ package com.ar.edu.utn.frba.ddsi.proxyEjemplo.models.services;
 import com.ar.edu.utn.frba.ddsi.proxyEjemplo.models.entities.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
@@ -26,9 +25,9 @@ public class HechoServices {
     }
     @PostConstruct
     public void inicializarDatos() {
-        Contribuyente contribuyente1 = new Registrado("Juan Perez","juan@email.com",25);
-        Contribuyente contribuyente2 = new Registrado("Maria Lopez","maria@email.com", 30);
-        Contribuyente contribuyente3= new Registrado("Carlos Gomez","carlos@email.com", 60);
+        Contribuyente contribuyente1 = new Registrado(UUID.randomUUID(), "Juan Perez");
+        Contribuyente contribuyente2 = new Registrado(UUID.randomUUID(), "Maria Lopez");
+        Contribuyente contribuyente3= new Registrado(UUID.randomUUID(), "Carlos Gomez");
 
         HECHOS = new ArrayList<>(List.of(new HechoTextual(
                         "SOY INSTANCIA 8082 Noticia Destacada",
@@ -147,7 +146,7 @@ public class HechoServices {
                                 new Ubicacion(6.1, 3.3),
                                 LocalDateTime.now(),
                                 List.of(new Etiqueta("Etiqueta5")),
-                                new Registrado("Juan Perez","juan@email.com",99),
+                                new Registrado(UUID.randomUUID(), "Juan Perez"),
                                 List.of("fotoB2.jpg", "audioB2.mp3")
                         )
                 )
