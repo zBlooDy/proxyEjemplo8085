@@ -5,6 +5,7 @@ import com.ar.edu.utn.frba.ddsi.proxyEjemplo.models.services.HechoServices;
 import jakarta.annotation.PostConstruct;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.ar.edu.utn.frba.ddsi.proxyEjemplo.models.entities.Anonimo;
 
@@ -26,8 +27,24 @@ public class HechoController {
 
 
     @GetMapping("/hechos")
-    public List<Hecho> getHechos() {
-        return hechoServices.getHechos();
+    public List<Hecho> getHechos(@RequestParam(required = false) String categoria,
+                                 @RequestParam(required = false) String fecha_reporte_desde,
+                                 @RequestParam(required = false) String fecha_reporte_hasta,
+                                 @RequestParam(required = false) String fecha_acontecimiento_desde,
+                                 @RequestParam(required = false) String fecha_acontecimiento_hasta,
+                                 @RequestParam(required = false) String latitud,
+                                    @RequestParam(required = false) String longitud,
+                                 @RequestParam(required = false) String ultimaConsulta
+    ) {
+
+        return hechoServices.getHechos(fecha_acontecimiento_hasta,
+                latitud,
+                longitud,
+                fecha_acontecimiento_desde,
+                fecha_reporte_hasta,
+                fecha_reporte_desde,
+                categoria,
+                ultimaConsulta);
     }
 
     @GetMapping("/hechos/{id}")

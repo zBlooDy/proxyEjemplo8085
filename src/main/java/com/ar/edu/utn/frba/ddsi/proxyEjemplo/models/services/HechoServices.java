@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class HechoServices {
@@ -155,8 +156,49 @@ public class HechoServices {
         COLECCIONES = List.of(COLECCION_A, COLECCION_B);
     }
 
-    public List<Hecho> getHechos() {
-        return HECHOS;
+    public List<Hecho> getHechos(String fecha_acontecimiento_hasta,
+                                 String latitud,
+                                 String longitud,
+                                 String fecha_acontecimiento_desde,
+                                 String fecha_reporte_hasta,
+                                 String fecha_reporte_desde,
+                                 String categoria,
+                                 String ultimaConsulta) {
+
+
+        return HECHOS.stream()
+                .filter(hecho -> categoria == null ||
+                        (hecho.getCategoria() != null && categoria.equalsIgnoreCase(hecho.getCategoria().getDetalle())))
+                .filter(hecho -> {
+                    if (fecha_reporte_desde == null && fecha_reporte_hasta == null) return true;
+                    if (hecho.getFechaCarga() == null) return false;
+                    boolean desde = fecha_reporte_desde == null ||
+                            !hecho.getFechaCarga().isBefore(LocalDateTime.parse(fecha_reporte_desde));
+                    boolean hasta = fecha_reporte_hasta == null ||
+                            !hecho.getFechaCarga().isAfter(LocalDateTime.parse(fecha_reporte_hasta));
+                    return desde && hasta;
+                })
+                .filter(hecho -> {
+                    if (fecha_acontecimiento_desde == null && fecha_acontecimiento_hasta == null) return true;
+                    if (hecho.getFechaAcontecimiento() == null) return false;
+                    boolean desde = fecha_acontecimiento_desde == null ||
+                            !hecho.getFechaAcontecimiento().isBefore(LocalDateTime.parse(fecha_acontecimiento_desde));
+                    boolean hasta = fecha_acontecimiento_hasta == null ||
+                            !hecho.getFechaAcontecimiento().isAfter(LocalDateTime.parse(fecha_acontecimiento_hasta));
+                    return desde && hasta;
+                })
+                .filter(hecho -> {
+                    if (latitud == null && longitud == null) return true;
+                    if (hecho.getUbicacion() == null) return false;
+                    boolean latOk = latitud == null || hecho.getUbicacion().getLatitud().equals(latitud);
+                    boolean lonOk = longitud == null || hecho.getUbicacion().getLongitud().equals(longitud);
+                    return latOk && lonOk;
+                })
+                .filter(hecho -> {
+                    if (ultimaConsulta == null) return true;
+                    return hecho.getFechaCarga().isAfter(LocalDateTime.parse(ultimaConsulta));
+                })
+                .collect(Collectors.toList());
     }
 
     public Hecho getHechoPorId(@PathVariable UUID id) {
